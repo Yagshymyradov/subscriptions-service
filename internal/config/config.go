@@ -31,8 +31,13 @@ func Load() (*Config, error) {
 	v := viper.New()
 
 	v.SetEnvPrefix("APP")
+	v.AddConfigPath(".")
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.AutomaticEnv()
+
+	_ = v.BindEnv("db.dsn")
+	_ = v.BindEnv("http.port")
+	_ = v.BindEnv("log.level")
 
 	v.SetDefault("http.port", "8080")
 	v.SetDefault("db.max_open_conns", 10)
