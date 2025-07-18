@@ -10,6 +10,7 @@
 /bin/
 /build/
 /dist/
+/docs/
 
 # Cache 
 /pkg/

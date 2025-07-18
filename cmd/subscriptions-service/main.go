@@ -1,8 +1,12 @@
+// @title Subscriptions Service API
+// @version 1.0
+// @description REST-service for aggregating online user subscriptions
+// @BasePath /
 package main
 
 import (
-	"net/http"
-
+	"fmt"
+	_ "github.com/Yagshymyradov/subscriptions-service/docs"
 	"github.com/Yagshymyradov/subscriptions-service/internal/config"
 	"github.com/Yagshymyradov/subscriptions-service/internal/db"
 	"github.com/Yagshymyradov/subscriptions-service/internal/handlers"
@@ -11,7 +15,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"go.uber.org/zap"
+	"net/http"
 )
 
 func main() {
@@ -32,6 +38,9 @@ func main() {
 
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
+	router.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL(fmt.Sprintf("http://localhost:%s/swagger/doc.json", cfg.HTTP.Port)),
+	))
 
 	subRepo := repository.NewPostgresSubscriptionRepository(database)
 	subSvc := service.NewSubscriptionService(subRepo)

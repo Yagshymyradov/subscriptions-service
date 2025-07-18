@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"encoding/json"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
@@ -34,6 +34,16 @@ func RegisterRoutes(r chi.Router, h *Handler) {
 	r.Get("/subscriptions/total", h.totalCost)
 }
 
+// create godoc
+// @Summary
+// @Tags
+// @Accept json
+// @Produce json
+// @Param subscription body models.Subscription true "Subscription to create"
+// @Success 201 {object} models.Subscription
+// @Failure 400 {string} string "Invalid json"
+// @Failure 500 {string} string "Internal"
+// @Router /subscriptions [post]
 func (h *Handler) create(w http.ResponseWriter, r *http.Request) {
 	var req models.Subscription
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -49,6 +59,16 @@ func (h *Handler) create(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(req)
 }
 
+// get godoc
+// @Summary
+// @Tags
+// @Accept json
+// @Produce json
+// @Param id path int true "Subscription ID"
+// @Success 200 {object} models.Subscription
+// @Failure 400 {string} string "Invalid id"
+// @Failure 500 {string} string "internal"
+// @Router /subscriptions/{id} [get]
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
@@ -74,6 +94,16 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// list godoc
+// @Summary
+// @Tags
+// @Accept json
+// @Produce json
+// @Param userID query string true "userID"
+// @Success 200 {array} models.Subscription
+// @Failure 400 {string} string "Invalid userID"
+// @Failure 500 {string} string "internal"
+// @Router /subscriptions [get]
 func (h *Handler) list(w http.ResponseWriter, r *http.Request) {
 	userID := r.URL.Query().Get("userID")
 	if userID == "" {
@@ -96,6 +126,17 @@ func (h *Handler) list(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// update godoc
+// @Summary
+// @Tags
+// @Accept json
+// @Produce json
+// @Param id path int true "Subscription ID"
+// @Param subscription body models.Subscription true "Subscription to update"
+// @Success 200 {object} models.Subscription
+// @Failure 400 {string} string "Invalid id"
+// @Failure 500 {string} string "internal"
+// @Router /subscriptions/{id} [put]
 func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
@@ -120,6 +161,16 @@ func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// delete godoc
+// @Summary
+// @Tags
+// @Accept json
+// @Produce json
+// @Param id path int true "Subscription ID"
+// @Success 200 {string} string "ok"
+// @Failure 400 {string} string "Invalid id"
+// @Failure 500 {string} string "internal"
+// @Router /subscriptions/{id} [delete]
 func (h *Handler) delete(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
@@ -139,6 +190,19 @@ func (h *Handler) delete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// totalCost godoc
+// @Summary
+// @Tags
+// @Accept json
+// @Produce json
+// @Param userID query string true "UUID of the user"
+// @Param month query int true "month (1-12)"
+// @Param year query int true "year (YYYY)"
+// @Param serviceFilter query string true "serviceFilter"
+// @Success 200 {object} map[string]int
+// @Failure 400 {string} string "Invalid userID, month, year, or serviceFilter"
+// @Failure 500 {string} string "internal"
+// @Router /subscriptions/total [get]
 func (h *Handler) totalCost(w http.ResponseWriter, r *http.Request) {
 	userID := r.URL.Query().Get("userID")
 	if userID == "" {
